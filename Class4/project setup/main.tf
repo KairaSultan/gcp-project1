@@ -28,3 +28,7 @@ resource "google_project" "gcp-project-team3" {
 	project_id = random_password.password.result
 	billing_account = data.google_billing_account.acct.id
 }
+
+output project_id {
+    value = google_project.gcp-project-team3.id
+}
