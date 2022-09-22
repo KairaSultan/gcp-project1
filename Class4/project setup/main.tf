@@ -34,11 +34,32 @@ output "project_id" {
 }
 
 resource "null_resource" "set-project" {
+     triggers = {
+    always_run = "${timestamp()}"
+  }
+
+  provisioner "local-exec" {
+  command = "gcloud config set project ${google_project.gcp-project-team3.id}"
+  }
+}
+
+
+resource "null_resource" "enable-apis" {
+  depends_on = [
+    google_project.gcp-project-team3,
+    null_resource.set-project
+  ]
+
   triggers = {
     always_run = "${timestamp()}"
   }
 
   provisioner "local-exec" {
-    command = "gcloud config set project ${google_project.gcp-project-team3.id}"
+    command = <<-EOT
+        gcloud services enable compute.googleapis.com
+        gcloud services enable dns.googleapis.com
+        gcloud services enable storage-api.googleapis.com
+        gcloud services enable container.googleapis.com
+    EOT
   }
-}
+}  
